@@ -48,5 +48,43 @@ const questions = [
 
 ];
 
+function writeToFile(fileName, data){
+    console.log("Writing ["+ data + "] to file [" + fileName + "]");
+    fs.writeFile(fileName, data, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        console.log("SVG file generated");
+    });
+}
+
+async function init(){
+    console.log("Starting init");
+    var svgString = '';
+    var svgFile = './dist/logo.svg';
+
+    const answers = await inquirer.prompt(questions);
+
+    var userText = "";
+    if(answers.text.length > 0 && answers.text.length < 4){
+        userText = answers.text
+    }else{
+        console.log("Invalid text length");
+        return;
+    }
+
+    userText= answers['text']
+    console.log("User text: " + text);
+
+    userTextColor = answers['text-color'];
+    console.log("User text color: " + userTextColor);
+
+    userShapeColor = answers['shape-color'];
+    console.log("User shape color: " + userShapeColor);
+
+    userShape = answers['shape'];
+    console.log("User shape: " + userShape);
+
+
 
 
