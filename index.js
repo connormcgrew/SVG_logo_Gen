@@ -1,6 +1,7 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 const {Circle, Square, Triangle} = require('./lib/shapes');
+const test = require('./lib/shapes.test')
 
 class Svg{
     constructor(){
@@ -13,8 +14,9 @@ class Svg{
     setTextElement(text, color){
         this.textElement = `<text x="150" y="125" font-size="60" text-anchor="middle" fill="${color}">${text}</text>`
     }
-    setShapeElement(shape){
+    setShapeElement(shape, color){
         this.shapeElement = shape.render();
+        this.shapeElement = this.shapeElement.replace('fill=""', `fill="${color}"`);
     }
 
 }
@@ -63,6 +65,8 @@ async function init(){
     var svgString = '';
     var svgFile = './dist/logo.svg';
 
+
+
     const answers = await inquirer.prompt(questions);
 
     var userText = "";
@@ -74,7 +78,7 @@ async function init(){
     }
 
     userText= answers['text']
-    console.log("User text: " + text);
+    console.log("User text: " + userText);
 
     userTextColor = answers['text-color'];
     console.log("User text color: " + userTextColor);
@@ -82,8 +86,39 @@ async function init(){
     userShapeColor = answers['shape-color'];
     console.log("User shape color: " + userShapeColor);
 
-    userShape = answers['shape'];
-    console.log("User shape: " + userShape);
+
+    let userShape;
+    if(answers.shape === 'Circle'){
+        userShape = new Circle();
+        console.log("Selected Circle");
+    }else if(answers.shape === 'Square'){
+        userShape = new Square();
+        console.log("Selected Square");
+    }else if(answers.shape === 'Triangle'){
+        userShape = new Triangle();
+        console.log("Selected Triangle");
+    }else{
+        console.log("Invalid shape");
+        return;
+    }
+    
+
+    userShape.setColor(userShapeColor);
+    console.log("User shape color: " + userShape.getColor());
+
+    var svg = new Svg();
+    svg.setTextElement(userText, userTextColor);
+    svg.setShapeElement(userShape, userShapeColor);
+    svgString = svg.render();
+
+    console.log("Displaying shape:\n\n" + svgString);
+
+    console.log("Shape Generated successfully");
+    console.log("Writing to file");
+    writeToFile(svgFile, svgString);
+}
+
+init();
 
 
 
